@@ -1,0 +1,9 @@
+## Interface: 72000
+## Title: |cffA02C2Fbd|rBuffs
+## Version: 0
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## Dependencies: bdCore
+
+template.xml
+core.lua
