@@ -95,8 +95,8 @@ defaults[#defaults+1] = {debuffvgrowth = {
 	callback = function() addon:config_changed() end
 }}
 
-bdCore:addModule("Buffs/Debuffs", defaults)
-local config = bdCore.config["Buffs/Debuffs"]
+local config = bdCore:addModule("Buffs/Debuffs", defaults)
+--local config = bdCore.config["Buffs/Debuffs"]
 
 local bdBuffs = CreateFrame("frame","bdBuffs",UIParent,"SecureAuraHeaderTemplate")
 bdBuffs:SetPoint('TOPRIGHT', UIParent, "TOPRIGHT", -10, -10)
