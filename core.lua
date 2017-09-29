@@ -98,6 +98,8 @@ defaults[#defaults+1] = {debuffvgrowth = {
 bdCore:addModule("Buffs/Debuffs", defaults)
 local config = bdCore.config.profile['Buffs/Debuffs']
 
+
+
 local bdBuffs = CreateFrame("frame","bdBuffs",UIParent,"SecureAuraHeaderTemplate")
 bdBuffs:SetPoint('TOPRIGHT', UIParent, "TOPRIGHT", -10, -10)
 local bdDebuffs = CreateFrame("frame","bdDebuffs",UIParent,"SecureAuraHeaderTemplate")
