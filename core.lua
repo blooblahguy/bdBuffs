@@ -96,7 +96,7 @@ defaults[#defaults+1] = {debuffvgrowth = {
 }}
 
 bdCore:addModule("Buffs/Debuffs", defaults)
-local config = bdCore.config["Buffs/Debuffs"]
+local config = bdCore.config.profile['Buffs/Debuffs']
 
 local bdBuffs = CreateFrame("frame","bdBuffs",UIParent,"SecureAuraHeaderTemplate")
 bdBuffs:SetPoint('TOPRIGHT', UIParent, "TOPRIGHT", -10, -10)
@@ -213,6 +213,8 @@ end
 function addon:config_changed()
 	if (InCombatLockdown()) then return end
 
+	config = bdCore.config.profile['Buffs/Debuffs']
+
 	local buffrows = math.ceil(20/config.buffperrow)
 	bdBuffs:SetSize((config.buffsize+config.buffspacing+2)*config.buffperrow, (config.buffsize+config.buffspacing+2)*buffrows)
 	bdBuffs:SetAttribute("template", ("bdBuffsTemplate%d"):format(config.buffsize))
@@ -273,6 +275,8 @@ function addon:config_changed()
 	loopChildren(bdDebuffs,config.debuffsize)
 	
 end
+
+bdCore:hookEvent("bd_reconfig", function() addon:config_changed() end)
 
 addon:RegisterEvent("PLAYER_REGEN_ENABLED")
 addon:RegisterEvent("ADDON_LOADED")
