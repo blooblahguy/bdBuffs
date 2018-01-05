@@ -95,6 +95,22 @@ defaults[#defaults+1] = {debuffvgrowth = {
 	callback = function() addon:config_changed() end
 }}
 
+-- Blacklist
+defaults[#defaults+1] = {tab = {
+	type="tab",
+	value="Aura Blacklist",
+}}
+defaults[#defaults+1] = {debuffblacklist = {
+	type = "list",
+	value = {},
+	label = "Blacklisted Debuffs",
+}}
+defaults[#defaults+1] = {buffblacklist = {
+	type = "list",
+	value = {},
+	label = "Blacklisted Buffs",
+}}
+
 bdCore:addModule("Buffs/Debuffs", defaults)
 local config = bdCore.config.profile['Buffs/Debuffs']
 
@@ -132,8 +148,16 @@ end
 local function UpdateAura(self, index, filter)
 	local unit = self:GetParent():GetAttribute('unit')
 	local filter = self:GetParent():GetAttribute('filter')
-	local name,b1,texture,count,b2,b3, expiration = UnitAura(unit, index, filter)
+	local name, b1, texture, count, b2, b3, expiration = UnitAura(unit, index, filter)
 	if(name) then
+		if(filter == 'HARMFUL' and config.debuffblacklist[name]) then
+			self:SetSize(0,0);
+		end
+
+		if(filter == 'HELPFUL' and config.buffblacklist[name]) then
+			self:SetSize(0,0);
+		end
+
 		self.texture:SetTexture(texture)
 		self.count:SetText(count > 1 and count or '')
 		self.expiration = expiration - GetTime()
@@ -189,7 +213,7 @@ local function setHeaderAttributes(header, template, isBuff)
 	local s = function(...) header:SetAttribute(...) end
     header.filter = isBuff and "HELPFUL" or "HARMFUL"
 	
-	if (ifBuff) then
+	if (isBuff) then
 		header:SetAttribute('includeWeapons', 1)
 		header:SetAttribute('weaponTemplate', "bdBuffsTemplate")
 	end
