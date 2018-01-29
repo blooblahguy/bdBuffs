@@ -121,6 +121,7 @@ bdBuffs:SetPoint('TOPRIGHT', UIParent, "TOPRIGHT", -10, -10)
 local bdDebuffs = CreateFrame("frame","bdDebuffs",UIParent,"SecureAuraHeaderTemplate")
 bdDebuffs:SetPoint('LEFT', UIParent, "CENTER", 200, 0)
 
+
 local function UpdateTime(self, elapsed)
 	if(self.expiration) then
 		self.expiration = math.max(self.expiration - elapsed, 0)
@@ -299,7 +300,8 @@ function addon:config_changed()
 		bdDebuffs:SetAttribute('wrapYOffset', -(config.debuffsize+config.debuffspacing+16))
 	end
 	loopChildren(bdDebuffs,config.debuffsize)
-	
+	bdDebuffs:EnableMouse(0)
+	bdDebuffs:SetAttribute('enableMouse', 0)
 end
 
 bdCore:hookEvent("bd_reconfig", function() addon:config_changed() end)
