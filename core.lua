@@ -149,7 +149,7 @@ end
 local function UpdateAura(self, index, filter)
 	local unit = self:GetParent():GetAttribute('unit')
 	local filter = self:GetParent():GetAttribute('filter')
-	local name, b1, texture, count, b2, b3, expiration = UnitAura(unit, index, filter)
+	local name, b1, texture, s0, b2, b3, sunit, s1, s1, expiration, b3, b4, b5, b6, count = UnitAura(unit, index, filter)
 	if(name) then
 		if(filter == 'HARMFUL' and config.debuffblacklist[name]) then
 			self:SetSize(0,0);
@@ -160,6 +160,9 @@ local function UpdateAura(self, index, filter)
 		end
 
 		self.texture:SetTexture(texture)
+		if (not count) then
+			count = 0
+		end
 		self.count:SetText(count > 1 and count or '')
 		self.expiration = expiration - GetTime()
 	end
