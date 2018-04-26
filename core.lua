@@ -149,7 +149,12 @@ end
 local function UpdateAura(self, index, filter)
 	local unit = self:GetParent():GetAttribute('unit')
 	local filter = self:GetParent():GetAttribute('filter')
-	local name, b1, texture, s0, b2, b3, sunit, s1, s1, expiration, b3, b4, b5, b6, count = UnitAura(unit, index, filter)
+	local name, rank, texture, count, dispelType, duration, expiration, caster, isStealable,
+		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
+		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
+	if (bdCore.isBFA) then
+		name, b1, texture, s0, b2, b3, sunit, s1, s1, expiration, b3, b4, b5, b6, count = UnitAura(unit, index, filter)
+	end
 	if(name) then
 		if(filter == 'HARMFUL' and config.debuffblacklist[name]) then
 			self:SetSize(0,0);
