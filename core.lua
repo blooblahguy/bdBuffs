@@ -153,7 +153,9 @@ local function UpdateAura(self, index, filter)
 		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
 		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
 	if (bdCore.isBFA) then
-		name, b1, texture, s0, b2, b3, sunit, s1, s1, expiration, b3, b4, b5, b6, count = UnitAura(unit, index, filter)
+		name, texture, count, dispelType, duration, expiration, caster, isStealable,
+		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
+		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
 	end
 	if(name) then
 		if(filter == 'HARMFUL' and config.debuffblacklist[name]) then
@@ -333,6 +335,9 @@ addon:SetScript("OnEvent",function(self,event,name)
 		-- show who casts each buff
 		hooksecurefunc(GameTooltip, "SetUnitAura", function(self, unit, index, filter)
 			local caster = select(8, UnitAura(unit, index, filter))
+			if (bdCore.isBFA) then
+				caster = select(8, UnitAura(unit, index, filter))
+			end
 			local name = caster and UnitName(caster)
 			if name then
 				self:AddDoubleLine("Cast by:", name, nil, nil, nil, 1, 1, 1)
