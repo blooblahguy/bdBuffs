@@ -149,14 +149,9 @@ end
 local function UpdateAura(self, index, filter)
 	local unit = self:GetParent():GetAttribute('unit')
 	local filter = self:GetParent():GetAttribute('filter')
-	local name, rank, texture, count, dispelType, duration, expiration, caster, isStealable,
+	local name, texture, count, debuffType, duration, expiration, caster, isStealable,
 		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
 		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
-	if (bdCore.isBFA) then
-		name, texture, count, dispelType, duration, expiration, caster, isStealable,
-		nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll,
-		timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
-	end
 	if(name) then
 		if(filter == 'HARMFUL' and config.debuffblacklist[name]) then
 			self:SetSize(0,0);
@@ -334,10 +329,8 @@ addon:SetScript("OnEvent",function(self,event,name)
 		
 		-- show who casts each buff
 		hooksecurefunc(GameTooltip, "SetUnitAura", function(self, unit, index, filter)
-			local caster = select(8, UnitAura(unit, index, filter))
-			if (bdCore.isBFA) then
-				caster = select(8, UnitAura(unit, index, filter))
-			end
+			local caster = select(7, UnitAura(unit, index, filter))
+			
 			local name = caster and UnitName(caster)
 			if name then
 				self:AddDoubleLine("Cast by:", name, nil, nil, nil, 1, 1, 1)
