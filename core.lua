@@ -303,8 +303,8 @@ function addon:config_changed()
 		bdDebuffs:SetAttribute('wrapYOffset', -(config.debuffsize+config.debuffspacing+16))
 	end
 	loopChildren(bdDebuffs,config.debuffsize)
-	bdDebuffs:EnableMouse(0)
-	bdDebuffs:SetAttribute('enableMouse', 0)
+	-- bdDebuffs:EnableMouse(0)
+	-- bdDebuffs:SetAttribute('enableMouse', 0)
 end
 
 bdCore:hookEvent("bd_reconfig", function() addon:config_changed() end)
