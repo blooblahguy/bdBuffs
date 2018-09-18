@@ -121,27 +121,31 @@ bdBuffs:SetPoint('TOPRIGHT', UIParent, "TOPRIGHT", -10, -10)
 local bdDebuffs = CreateFrame("frame","bdDebuffs",UIParent,"SecureAuraHeaderTemplate")
 bdDebuffs:SetPoint('LEFT', UIParent, "CENTER", 200, 0)
 
-
+local total = 0
 local function UpdateTime(self, elapsed)
-	if(self.expiration) then
-		self.expiration = math.max(self.expiration - elapsed, 0)
-		local seconds = self.expiration
+	total = total + elapsed
+	if (total > 0.1) then
+		total = 0
+		if(self.expiration) then
+			self.expiration = math.max(self.expiration - elapsed, 0)
+			local seconds = self.expiration
 
-		if(self.expiration <= 0) then
-			self.duration:SetText('')
-		else
-			local secs = tonumber(math.floor(seconds))
-			local mins = tonumber(math.floor(seconds/60));
-			local hours = tonumber(round(mins/60,1));
+			if(self.expiration <= 0) then
+				self.duration:SetText('')
+			else
+				local secs = tonumber(math.floor(seconds))
+				local mins = tonumber(math.floor(seconds/60));
+				local hours = tonumber(round(mins/60,1));
 
-			if (hours and hours > 1) then
-				self.duration:SetText(hours.."h")
-			elseif (mins and mins > 0) then
-				self.duration:SetText(mins.."m")
-			else			
-				self.duration:SetText(secs.."s")
+				if (hours and hours > 1) then
+					self.duration:SetText(hours.."h")
+				elseif (mins and mins > 0) then
+					self.duration:SetText(mins.."m")
+				else			
+					self.duration:SetText(secs.."s")
+				end
+			
 			end
-		
 		end
 	end
 end
