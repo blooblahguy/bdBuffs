@@ -322,12 +322,7 @@ addon:SetScript("OnEvent",function(self,event,name)
 
 		setHeaderAttributes(bdBuffs,"bdBuffsTemplate",true)
 		setHeaderAttributes(bdDebuffs,"bdDebuffsTemplate",false)
-		
-		BuffFrame:UnregisterEvent("UNIT_AURA")
 		addon:config_changed()
-		local h = function(f) f.Show = f.Hide; f:Hide() end
-		h(BuffFrame)
-		h(TemporaryEnchantFrame)
 		
 		-- show who casts each buff
 		hooksecurefunc(GameTooltip, "SetUnitAura", function(self, unit, index, filter)
@@ -342,9 +337,17 @@ addon:SetScript("OnEvent",function(self,event,name)
 		
 		-- clean up
 		setHeaderAttributes = nil
-		collectgarbage("collect")
 	else
 		addon:config_changed()
+	end
+end)
+
+local addonDisabler = CreateFrame("frame", nil)
+addonDisabler:RegisterEvent("ADDON_LOADED")
+addonDisabler:SetScript("OnEvent", function(self, event, addon)
+	BuffFrame:UnregisterAllEvents("UNIT_AURA")
+	if (IsAddOnLoaded("Blizzard_BuffFrane")) then
+		DisableAddOn("Blizzard_BuffFrane")
 	end
 end)
 
