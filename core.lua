@@ -114,7 +114,8 @@ defaults[#defaults+1] = {buffblacklist = {
 bdConfigLib:RegisterModule({
 	name = "Buffs"
 }, defaults, BD_persistent)
-local config = bdConfigLib.profile['Buffs/Debuffs']
+local config = bdConfigLib:GetSave("Buffs")
+-- local config = bdConfigLib.profile['Buffs/Debuffs']
 
 
 local bdBuffs = CreateFrame("frame","bdBuffs",UIParent,"SecureAuraHeaderTemplate")
@@ -248,7 +249,7 @@ end
 function addon:config_changed()
 	if (InCombatLockdown()) then return end
 
-	config = bdCore.config.profile['Buffs/Debuffs']
+	-- config = 
 
 	local buffrows = math.ceil(20/config.buffperrow)
 	bdBuffs:SetSize((config.buffsize+config.buffspacing+2)*config.buffperrow, (config.buffsize+config.buffspacing+2)*buffrows)
