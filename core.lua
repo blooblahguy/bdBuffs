@@ -344,10 +344,11 @@ addon:SetScript("OnEvent",function(self,event,name)
 	end
 end)
 
-local addonDisabler = CreateFrame("frame", nil)
+local addonDisabler = CreateFrame("Frame", nil)
 addonDisabler:RegisterEvent("ADDON_LOADED")
 addonDisabler:SetScript("OnEvent", function(self, event, addon)
 	BuffFrame:UnregisterAllEvents("UNIT_AURA")
+	BuffFrame:Hide()
 	if (IsAddOnLoaded("Blizzard_BuffFrane")) then
 		DisableAddOn("Blizzard_BuffFrane")
 	end
