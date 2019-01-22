@@ -111,11 +111,9 @@ defaults[#defaults+1] = {buffblacklist = {
 	label = "Blacklisted Buffs",
 }}
 
-bdConfigLib:RegisterModule({
+local config = bdConfigLib:RegisterModule({
 	name = "Buffs"
 }, defaults, BD_persistent)
-local config = bdConfigLib:GetSave("Buffs")
--- local config = bdConfigLib.profile['Buffs/Debuffs']
 
 
 local bdBuffs = CreateFrame("frame","bdBuffs",UIParent,"SecureAuraHeaderTemplate")
