@@ -113,7 +113,7 @@ defaults[#defaults+1] = {buffblacklist = {
 
 local config = bdConfigLib:RegisterModule({
 	name = "Buffs"
-}, defaults, BD_persistent)
+}, defaults, "BD_persistent")
 
 
 local bdBuffs = CreateFrame("frame","bdBuffs",UIParent,"SecureAuraHeaderTemplate")
