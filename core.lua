@@ -13,7 +13,6 @@ defaults[#defaults+1] = {buffsize = {
 	step=2,
 	value=34,
 	label="Buff Size",
-	callback = function() addon:config_changed() end
 }}
 defaults[#defaults+1] = {buffspacing = {
 	type="slider",
@@ -22,7 +21,6 @@ defaults[#defaults+1] = {buffspacing = {
 	step=2,
 	value=0,
 	label="Buff Spacing",
-	callback = function() addon:config_changed() end
 }}
 defaults[#defaults+1] = {buffperrow = {
 	type="slider",
@@ -31,21 +29,32 @@ defaults[#defaults+1] = {buffperrow = {
 	step=1,
 	value=20,
 	label="Buff Per Row",
-	callback = function() addon:config_changed() end
+}}
+defaults[#defaults+1] = {bufffontsize = {
+	type="slider",
+	min=8,
+	max=30,
+	step=2,
+	value=14,
+	label="Buff Font Size",
 }}
 defaults[#defaults+1] = {buffhgrowth = {
 	type="dropdown",
 	value="Left",
 	options={"Left","Right"},
 	label="Buff Horizontal Growth",
-	callback = function() addon:config_changed() end
 }}
 defaults[#defaults+1] = {buffvgrowth = {
 	type="dropdown",
 	value="Downwards",
 	options={"Upwards","Downwards"},
 	label="Buff Vertical Growth",
-	callback = function() addon:config_changed() end
+}}
+defaults[#defaults+1] = {bufftimer = {
+	type="dropdown",
+	value="BOTTOM",
+	options={"BOTTOM","TOP","LEFT","RIGHT"},
+	label="Buff Timer Position",
 }}
 
 -- Debuffs
@@ -60,7 +69,6 @@ defaults[#defaults+1] = {debuffsize = {
 	step=2,
 	value=32,
 	label="Debuff Size",
-	callback = function() addon:config_changed() end
 }}
 defaults[#defaults+1] = {debuffspacing = {
 	type="slider",
@@ -69,7 +77,6 @@ defaults[#defaults+1] = {debuffspacing = {
 	step=2,
 	value=0,
 	label="Debuff Spacing",
-	callback = function() addon:config_changed() end
 }}
 defaults[#defaults+1] = {debuffperrow = {
 	type="slider",
@@ -78,75 +85,101 @@ defaults[#defaults+1] = {debuffperrow = {
 	step=1,
 	value=2,
 	label="Debuff Per Row",
-	callback = function() addon:config_changed() end
+}}
+defaults[#defaults+1] = {debufffontsize = {
+	type="slider",
+	min=8,
+	max=30,
+	step=2,
+	value=14,
+	label="Debuff Font Size",
 }}
 defaults[#defaults+1] = {debuffhgrowth = {
 	type="dropdown",
 	value="Right",
 	options={"Left","Right"},
 	label="Debuff Horizontal Growth",
-	callback = function() addon:config_changed() end
 }}
 defaults[#defaults+1] = {debuffvgrowth = {
 	type="dropdown",
 	value="Downwards",
 	options={"Upwards","Downwards"},
 	label="Debuff Vertical Growth",
-	callback = function() addon:config_changed() end
+}}
+defaults[#defaults+1] = {debufftimer = {
+	type="dropdown",
+	value="BOTTOM",
+	options={"BOTTOM","TOP","LEFT","RIGHT"},
+	label="Debuff Timer Position",
 }}
 
 -- Blacklist
-defaults[#defaults+1] = {tab = {
-	type="tab",
-	value="Aura Blacklist",
-}}
-defaults[#defaults+1] = {debuffblacklist = {
-	type = "list",
-	value = {},
-	label = "Blacklisted Debuffs",
-}}
-defaults[#defaults+1] = {buffblacklist = {
-	type = "list",
-	value = {},
-	label = "Blacklisted Buffs",
-}}
+-- defaults[#defaults+1] = {tab = {
+-- 	type="tab",
+-- 	value="Aura Blacklist",
+-- }}
+-- defaults[#defaults+1] = {debuffblacklist = {
+-- 	type = "list",
+-- 	value = {},
+-- 	label = "Blacklisted Debuffs",
+-- }}
+-- defaults[#defaults+1] = {buffblacklist = {
+-- 	type = "list",
+-- 	value = {},
+-- 	label = "Blacklisted Buffs",
+-- }}
+
+
 
 local config = bdConfigLib:RegisterModule({
-	name = "Buffs"
+	name = "Buffs",
+	callback = function() addon:config_changed() end
 }, defaults, "BD_persistent")
 
+local bufffont = CreateFont("BD_BUFFS_FONT")
+bufffont:SetFont(bdCore.media.font, config.bufffontsize)
+bufffont:SetShadowColor(0, 0, 0)
+bufffont:SetShadowOffset(1, -1)
+
+local debufffont = CreateFont("BD_DEBUFFS_FONT")
+debufffont:SetFont(bdCore.media.font, config.debufffontsize)
+debufffont:SetShadowColor(0, 0, 0)
+debufffont:SetShadowOffset(1, -1)
 
 local bdBuffs = CreateFrame("frame","bdBuffs",UIParent,"SecureAuraHeaderTemplate")
 bdBuffs:SetPoint('TOPRIGHT', UIParent, "TOPRIGHT", -10, -10)
 local bdDebuffs = CreateFrame("frame","bdDebuffs",UIParent,"SecureAuraHeaderTemplate")
 bdDebuffs:SetPoint('LEFT', UIParent, "CENTER", 200, 0)
 
-local total = 0
 local function UpdateTime(self, elapsed)
-	total = total + elapsed
-	if (total > 0.1) then
-		total = 0
+	self.total = self.total + elapsed
+	if (self.total > 0.1) then
 		if(self.expiration) then
-			self.expiration = math.max(self.expiration - elapsed, 0)
+			self.expiration = math.max(self.expiration - self.total, 0)
 			local seconds = self.expiration
 
 			if(self.expiration <= 0) then
 				self.duration:SetText('')
 			else
-				local secs = tonumber(math.floor(seconds))
-				local mins = tonumber(math.floor(seconds/60));
-				local hours = tonumber(round(mins/60,1));
+				if (seconds < 10) then
+					seconds = round(seconds, 1)
+				else
+					seconds = math.floor(seconds)
+				end
+				local mins = math.floor(seconds/60);
+				local hours = round(mins/60, 1);
 
 				if (hours and hours > 1) then
 					self.duration:SetText(hours.."h")
 				elseif (mins and mins > 0) then
 					self.duration:SetText(mins.."m")
 				else			
-					self.duration:SetText(secs.."s")
+					self.duration:SetText(seconds.."s")
 				end
 			
 			end
 		end
+		self.total = 0
 	end
 end
 
@@ -155,18 +188,12 @@ local function UpdateAura(self, index, filter)
 	local filter = self:GetParent():GetAttribute('filter')
 	local name, texture, count, debuffType, duration, expiration, caster, isStealable, nameplateShowSelf, spellID, canApply, isBossDebuff, casterIsPlayer, nameplateShowAll, timeMod, effect1, effect2, effect3 = UnitAura(unit, index, filter)
 	if(name) then
-		if(filter == 'HARMFUL' and config.debuffblacklist[name]) then
-			self:SetSize(0,0);
-		end
-
-		if(filter == 'HELPFUL' and config.buffblacklist[name]) then
-			self:SetSize(0,0);
-		end
-
 		self.texture:SetTexture(texture)
 		if (not count) then
 			count = 0
 		end
+		self.total = 0
+		self.name = name
 		self.count:SetText(count > 1 and count or '')
 		self.expiration = expiration - GetTime()
 	end
@@ -177,6 +204,17 @@ local function OnAttributeChanged(self, attribute, value)
 		UpdateAura(self, value)
 	end
 end
+
+local counterAnchor = {}
+counterAnchor['BOTTOM'] = "TOP"
+counterAnchor['LEFT'] = "RIGHT"
+counterAnchor['TOP'] = "BOTTOM"
+counterAnchor['RIGHT'] = "LEFT"
+counterSpacing = {}
+counterSpacing["TOP"] = {0, 4}
+counterSpacing["LEFT"] = {-4, 0}
+counterSpacing["RIGHT"] = {4, 0}
+counterSpacing["BOTTOM"] = {0, -4}
 
 local function InitiateAura(self, name, button)
 	if(not string.match(name, '^child')) then return end
@@ -207,9 +245,17 @@ local function InitiateAura(self, name, button)
 
 	if (not button.duration) then
 		button.duration = button:CreateFontString()
-		button.duration:SetPoint('TOP', button, "BOTTOM", 0, -4)
-		button.duration:SetFont(bdCore.media.font, 12, "OUTLINE")
 		button.duration:SetJustifyH("CENTER")
+	end
+
+	if (filter == "HARMFUL") then
+		button.duration:SetFontObject("BD_DEBUFFS_FONT")
+		button.count:SetFontObject("BD_DEBUFFS_FONT")
+		button.duration:SetPoint(counterAnchor[config.debufftimer], button, config.debufftimer, unpack(counterSpacing[config.debufftimer]))
+	else
+		button.duration:SetFontObject("BD_BUFFS_FONT")
+		button.count:SetFontObject("BD_BUFFS_FONT")
+		button.duration:SetPoint(counterAnchor[config.bufftimer], button, config.bufftimer, unpack(counterSpacing[config.bufftimer]))
 	end
 	
 	UpdateAura(button, button:GetID(), filter)
@@ -247,7 +293,9 @@ end
 function addon:config_changed()
 	if (InCombatLockdown()) then return end
 
-	-- config = 
+	-- font sizes
+	bufffont:SetFont(bdCore.media.font, config.bufffontsize)
+	debufffont:SetFont(bdCore.media.font, config.debufffontsize)
 
 	local buffrows = math.ceil(20/config.buffperrow)
 	bdBuffs:SetSize((config.buffsize+config.buffspacing+2)*config.buffperrow, (config.buffsize+config.buffspacing+2)*buffrows)
@@ -267,16 +315,26 @@ function addon:config_changed()
 		bdBuffs:SetAttribute('sortDirection', "+")
 		bdBuffs:SetAttribute('point', "TOPLEFT")
 	end
+
+	local yspacing = 2
+	if (config.bufftimer == "LEFT" or config.bufftimer == "RIGHT") then
+		yspacing = yspacing + config.buffsize + config.buffspacing
+	else
+		yspacing = yspacing + config.buffsize + config.buffspacing + config.bufffontsize + 6
+	end
+	
 	if (config.buffvgrowth == "Upwards") then
-		bdBuffs:SetAttribute('wrapYOffset', (config.buffsize+config.buffspacing+16))
+		bdBuffs:SetAttribute('wrapYOffset', yspacing)
+
 		if (config.buffhgrowth == "Left") then
 			bdBuffs:SetAttribute('point', "BOTTOMRIGHT")
 		else
 			bdBuffs:SetAttribute('point', "BOTTOMLEFT")
 		end
 	else
-		bdBuffs:SetAttribute('wrapYOffset', -(config.buffsize+config.buffspacing+16))
+		bdBuffs:SetAttribute('wrapYOffset', -yspacing)
 	end
+
 	loopChildren(bdBuffs,config.buffsize)
 
 	local debuffrows = math.ceil(10/config.debuffperrow)
@@ -296,15 +354,25 @@ function addon:config_changed()
 		bdDebuffs:SetAttribute('sortDirection', "+")
 		bdDebuffs:SetAttribute('point', "TOPLEFT")
 	end
+
+	local yspacing = 2
+	if (config.debufftimer == "LEFT" or config.debufftimer == "RIGHT") then
+		yspacing = yspacing + config.debuffsize + config.debuffspacing
+	else
+		yspacing = yspacing + config.debuffsize + config.debuffspacing + config.debufffontsize + 6
+	end
+	
+
 	if (config.debuffvgrowth == "Upwards") then
-		bdDebuffs:SetAttribute('wrapYOffset', (config.debuffsize+config.debuffspacing+16))
+		bdDebuffs:SetAttribute('wrapYOffset', yspacing)
+
 		if (config.debuffhgrowth == "Left") then
 			bdDebuffs:SetAttribute('point', "BOTTOMRIGHT")
 		else
 			bdDebuffs:SetAttribute('point', "BOTTOMLEFT")
 		end
 	else
-		bdDebuffs:SetAttribute('wrapYOffset', -(config.debuffsize+config.debuffspacing+16))
+		bdDebuffs:SetAttribute('wrapYOffset', -yspacing)
 	end
 	loopChildren(bdDebuffs,config.debuffsize)
 	-- bdDebuffs:EnableMouse(0)
@@ -347,9 +415,9 @@ addonDisabler:RegisterEvent("ADDON_LOADED")
 addonDisabler:SetScript("OnEvent", function(self, event, addon)
 	BuffFrame:UnregisterAllEvents("UNIT_AURA")
 	BuffFrame:Hide()
-	if (IsAddOnLoaded("Blizzard_BuffFrane")) then
-		DisableAddOn("Blizzard_BuffFrane")
-	end
+	-- if (IsAddOnLoaded("Blizzard_BuffFrane")) then
+	-- 	DisableAddOn("Blizzard_BuffFrane")
+	-- end
 end)
 
-
+addon:config_changed()
