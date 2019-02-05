@@ -6,6 +6,11 @@ defaults[#defaults+1] = {tab = {
 	type="tab",
 	value="Buffs",
 }}
+defaults[#defaults+1] = {decimalprec = {
+	type = "checkbox",
+	value = true,
+	label = "Show decimals on durations under 10 seconds",
+}}
 defaults[#defaults+1] = {buffsize = {
 	type="slider",
 	min=16,
@@ -161,7 +166,7 @@ local function UpdateTime(self, elapsed)
 			if(self.expiration <= 0) then
 				self.duration:SetText('')
 			else
-				if (seconds < 10) then
+				if (seconds < 10 or not config.decimalprec) then
 					seconds = round(seconds, 1)
 				else
 					seconds = math.floor(seconds)
