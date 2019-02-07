@@ -167,12 +167,12 @@ local function UpdateTime(self, elapsed)
 				self.duration:SetText('')
 			else
 				if (seconds < 10 or not config.decimalprec) then
-					seconds = round(seconds, 1)
+					seconds = bdCore:round(seconds, 1)
 				else
 					seconds = math.floor(seconds)
 				end
 				local mins = math.floor(seconds/60);
-				local hours = round(mins/60, 1);
+				local hours = bdCore:round(mins/60, 1);
 
 				if (hours and hours > 1) then
 					self.duration:SetText(hours.."h")
