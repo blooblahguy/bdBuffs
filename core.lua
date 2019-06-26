@@ -201,6 +201,16 @@ local function UpdateAura(self, index, filter)
 		self.name = name
 		self.count:SetText(count > 1 and count or '')
 		self.expiration = expiration - GetTime()
+
+		if (filter == "HARMFUL") then
+			if debuffType then
+				color = DebuffTypeColor[debuffType]
+			else
+				color = bdCore.media.red
+			end
+			self.border:SetVertexColor(color.r * 0.6, color.g * 0.6, color.b * 0.6)
+		end
+
 	end
 end
 
