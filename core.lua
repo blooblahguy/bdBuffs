@@ -208,7 +208,8 @@ local function UpdateAura(self, index, filter)
 			else
 				color = bdCore.media.red
 			end
-			self.border:SetVertexColor(color.r * 0.6, color.g * 0.6, color.b * 0.6)
+			local r, g, b = unpack(color)
+			self.border:SetVertexColor(r * 0.6, g * 0.6, b * 0.6)
 		end
 
 	end
