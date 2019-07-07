@@ -204,7 +204,7 @@ local function UpdateAura(self, index, filter)
 
 		if (filter == "HARMFUL") then
 			local color = bdCore.media.red
-			if debuffType then
+			if debuffType and DebuffTypeColor[debuffType] then
 				color = DebuffTypeColor[debuffType]
 			end
 			local r, g, b = unpack(color)
