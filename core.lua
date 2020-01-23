@@ -118,22 +118,6 @@ defaults[#defaults+1] = {debufftimer = {
 	label="Debuff Timer Position",
 }}
 
--- Blacklist
--- defaults[#defaults+1] = {tab = {
--- 	type="tab",
--- 	value="Aura Blacklist",
--- }}
--- defaults[#defaults+1] = {debuffblacklist = {
--- 	type = "list",
--- 	value = {},
--- 	label = "Blacklisted Debuffs",
--- }}
--- defaults[#defaults+1] = {buffblacklist = {
--- 	type = "list",
--- 	value = {},
--- 	label = "Blacklisted Buffs",
--- }}
-
 
 
 local config = bdConfigLib:RegisterModule({
@@ -390,8 +374,6 @@ function addon:config_changed()
 		bdDebuffs:SetAttribute('wrapYOffset', -yspacing)
 	end
 	loopChildren(bdDebuffs,config.debuffsize)
-	-- bdDebuffs:EnableMouse(0)
-	-- bdDebuffs:SetAttribute('enableMouse', 0)
 end
 
 bdCore:hookEvent("bd_reconfig", function() addon:config_changed() end)
@@ -430,9 +412,6 @@ addonDisabler:RegisterEvent("ADDON_LOADED")
 addonDisabler:SetScript("OnEvent", function(self, event, addon)
 	BuffFrame:UnregisterAllEvents("UNIT_AURA")
 	BuffFrame:Hide()
-	-- if (IsAddOnLoaded("Blizzard_BuffFrane")) then
-	-- 	DisableAddOn("Blizzard_BuffFrane")
-	-- end
 end)
 
 addon:config_changed()
