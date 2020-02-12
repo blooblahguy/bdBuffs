@@ -172,6 +172,13 @@ local function UpdateTime(self, elapsed)
 	end
 end
 
+local debuff_colors = {
+	['Magic'] = { 0.20, 0.60, 1.00 },
+	['Curse'] = { 0.60, 0.00, 1.00 },
+	['Disease'] = { 0.60, 0.40, 0 },
+	['Poison'] = { 0.00, 0.60, 0 },
+	['None'] = { 0.6, 0.1, 0.2 }
+}
 local function UpdateAura(self, index, filter)
 	local unit = self:GetParent():GetAttribute('unit')
 	local filter = self:GetParent():GetAttribute('filter')
@@ -187,12 +194,15 @@ local function UpdateAura(self, index, filter)
 		self.expiration = expiration - GetTime()
 
 		if (filter == "HARMFUL") then
-			local color = bdCore.media.red
-			if debuffType and DebuffTypeColor[debuffType] then
-				color = DebuffTypeColor[debuffType]
+			local color = debuff_colors['None']
+
+			if debuffType and debuff_colors[debuffType] then
+				color = debuff_colors[debuffType]
 			end
+
 			local r, g, b = unpack(color)
-			self.border:SetVertexColor(r * 0.6, g * 0.6, b * 0.6)
+
+			self.border:SetVertexColor(r, g, b)
 		end
 
 	end
